@@ -44,8 +44,8 @@ st.markdown("---")
 @st.cache_data
 def load_visualizer():
     """시각화 객체 로드 (캐싱)"""
-    excel_path = os.path.join(os.path.dirname(__file__), '중금속_통합_18-24년_연평균_요약.xlsx')
-    return HeavyMetalVisualizer(excel_path)
+    #excel_path = os.path.join(os.path.dirname(__file__), '중금속_통합_18-24년_연평균_요약.xlsx')
+    return HeavyMetalVisualizer('중금속_통합_18-24년_연평균_요약.xlsx')
 
 visualizer = load_visualizer()
 
@@ -107,105 +107,16 @@ with col_main:
         
         # 선택된 지역 확인
         if selected_region and selected_region != "전체":
-            # 보기 모드 선택 버튼
-            col1, col2, col3 = st.columns([1, 1, 2])
-            
-            with col1:
-                view_mode = st.radio(
-                    "보기 모드",
-                    ["전체연도", "특정연도"],
-                    horizontal=True,
-                    key="view_mode_selector"
-                )
-            
-            # 특정연도 모드일 때 연도 선택
-            selected_year_for_view = None
-            if view_mode == "특정연도":
-                with col2:
-                    selected_year_for_view = st.selectbox(
-                        "연도 선택",
-                        available_years,
-                        key="year_for_region_view"
-                    )
-            
-            # 그래프 생성
-            fig = visualizer.plot_region_yearly_trend(
-                selected_region, 
-                view_mode=view_mode,
-                selected_year=selected_year_for_view
-            )
-            
+            fig = visualizer.plot_region_yearly_trend(selected_region)
             if fig:
                 st.pyplot(fig)
                 plt.close(fig)
                 
-                # AI 해석 버튼
-                st.markdown("---")
-                if st.button("🤖 AI 해석", key="ai_analysis_region", use_container_width=True):
-                    with st.spinner("AI가 그래프를 분석 중입니다..."):
-                        if view_mode == "전체연도":
-                            analysis = visualizer.analyze_region_yearly_trend(selected_region)
-                        else:
-                            analysis = visualizer.analyze_region_monthly(selected_region, selected_year_for_view)
-                        
-                        if analysis:
-                            st.markdown("### 📊 AI 분석 결과")
-                            
-                            metals_info = {
-                                'Pb': {'name': '납', 'full_name': 'Pb (납)'},
-                                'Cd': {'name': '카드뮴', 'full_name': 'Cd (카드뮴)'},
-                                'As': {'name': '비소', 'full_name': 'As (비소)'}
-                            }
-                            
-                            for metal in ['Pb', 'Cd', 'As']:
-                                if metal in analysis:
-                                    metal_info = metals_info[metal]
-                                    metal_analysis = analysis[metal]
-                                    
-                                    st.markdown(f"#### {metal_info['full_name']}")
-                                    
-                                    # 위험 수준 표시
-                                    risk_level = metal_analysis.get('risk_level', '정상')
-                                    risk_colors = {
-                                        '정상': '🟢',
-                                        '주의': '🟡',
-                                        '위험': '🟠',
-                                        '매우 위험': '🔴'
-                                    }
-                                    st.markdown(f"**위험 수준**: {risk_colors.get(risk_level, '⚪')} {risk_level}")
-                                    
-                                    # 추세 정보
-                                    trend = metal_analysis.get('trend', '안정')
-                                    st.markdown(f"**추세**: {trend}")
-                                    
-                                    # 경고 메시지
-                                    warnings = metal_analysis.get('warnings', [])
-                                    if warnings:
-                                        st.markdown("**⚠️ 주의사항:**")
-                                        for warning in warnings:
-                                            st.markdown(f"- {warning}")
-                                    
-                                    # 추천 사항
-                                    recommendations = metal_analysis.get('recommendations', [])
-                                    if recommendations:
-                                        st.markdown("**💡 권장 사항:**")
-                                        for rec in recommendations:
-                                            st.markdown(f"- {rec}")
-                                    
-                                    st.markdown("---")
-                
                 # 통계 정보
                 with st.expander("📈 통계 정보 보기"):
-                    if view_mode == "전체연도":
-                        region_df = visualizer.df[visualizer.df['지역'] == selected_region]
-                        yearly_avg = region_df.groupby('연도')[['Pb', 'Cd', 'As']].mean().reset_index()
-                        st.dataframe(yearly_avg, use_container_width=True)
-                    else:
-                        filtered_df = visualizer.df[
-                            (visualizer.df['지역'] == selected_region) & 
-                            (visualizer.df['연도'] == selected_year_for_view)
-                        ].sort_values('월_숫자')
-                        st.dataframe(filtered_df[['월_숫자', 'Pb', 'Cd', 'As']], use_container_width=True)
+                    region_df = visualizer.df[visualizer.df['지역'] == selected_region]
+                    yearly_avg = region_df.groupby('연도')[['Pb', 'Cd', 'As']].mean().reset_index()
+                    st.dataframe(yearly_avg, use_container_width=True)
         else:
             st.info("👈 오른쪽에서 지역을 선택해주세요.")
 

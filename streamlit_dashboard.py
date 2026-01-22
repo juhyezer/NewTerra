@@ -7,7 +7,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import numpy as np
-import os
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -22,8 +21,8 @@ st.set_page_config(
 )
 
 # 한글 폰트 설정
-fontpath = os.path.join(os.path.dirname(__file__), 'NanumGothic.ttf')
-
+fontpath = 'NanumGothic.ttf'
+"""
 # 폰트를 Matplotlib에 등록
 if os.path.exists(fontpath):
     font = fm.FontProperties(fname=fontpath)
@@ -32,8 +31,8 @@ if os.path.exists(fontpath):
     plt.rc('font', family='NanumGothic')
 else:
     # 폰트 파일이 없을 경우 시스템 기본 한글 폰트 사용
-    plt.rc('font', family='AppleGothic')
-
+    plt.rc('font', family='AppleGothic')"""
+plt.rc('font', family='NanumGothic')
 plt.rc('axes', unicode_minus=False)
 
 # 제목

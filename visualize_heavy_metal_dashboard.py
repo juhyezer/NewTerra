@@ -9,22 +9,14 @@ import matplotlib.font_manager as fm
 from matplotlib.patches import Rectangle
 import numpy as np
 import warnings
-import os
+#import os
 warnings.filterwarnings('ignore')
 
 # 한글 폰트 설정 (NanumGothic.ttf 사용)
-fontpath = os.path.join(os.path.dirname(__file__), 'NanumGothic.ttf')
+fontpath = 'NanumGothic.ttf'
 
-# 폰트를 Matplotlib에 등록
-if os.path.exists(fontpath):
-    font = fm.FontProperties(fname=fontpath)
-    fm.fontManager.addfont(fontpath)
-    # 한글 폰트를 기본 폰트로 설정
-    plt.rc('font', family='NanumGothic')
-else:
-    # 폰트 파일이 없을 경우 시스템 기본 한글 폰트 사용
-    plt.rc('font', family='AppleGothic')  # macOS
 
+plt.rc('font', family='NanumGothic')
 plt.rc('axes', unicode_minus=False)
 
 
@@ -633,7 +625,7 @@ class HeavyMetalVisualizer:
 def main():
     """메인 실행 함수"""
     # 파일 경로
-    excel_path = os.path.join(os.path.dirname(__file__), '중금속_통합_18-24년_연평균_요약.xlsx')
+    excel_path = '중금속_통합_18-24년_연평균_요약.xlsx'
     
     # 시각화 객체 생성
     visualizer = HeavyMetalVisualizer(excel_path)
